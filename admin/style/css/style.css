@@ -1,0 +1,51 @@
+body{
+	background-color: azure;
+}
+ 
+#box {  
+border: 1px solid rgb(200, 200, 200);   
+box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 2px; 
+background: rgba(200, 200, 200, 0.1);   
+border-radius: 4px; top:50px;
+}
+ 
+h2 {    
+text-align:center;  
+color:#fff;
+}	
+		
+
+header{
+	background-color: #4267b2;
+	padding: 25px 0px;
+	margin-bottom: 5px;
+};
+
+
+.btn-group-sm > .btn, .btn-sm{
+	padding: 5px 20px;
+}
+.btn{
+	margin-bottom: 3px;
+}
+
+a:hover{
+text-decoration: none;
+background-color: #3b5ca0
+}
+li{
+	font-weight: bold;
+}
+
+.container{
+border: 1px solid #ccc !important;
+border-radius: 5px !important;
+margin: 5px auto 0px auto !important;
+padding: 5px !important;
+background-color: white;
+}
+footer{
+text-align: center;
+margin: 0px;
+padding: 4px 0px 4px 0px;
+}
