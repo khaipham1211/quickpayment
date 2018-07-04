@@ -2,11 +2,7 @@
  
 <?php
 // Kiểm tra quyền, nếu không có quyền thì chuyển nó về trang logout
-if (!is_deposit()){
-    redirect(create_link(base_url('admin'), array('m' => 'common', 'a' => 'logout')));
-}
-?>
-<?php 
+if (is_admin()||is_deposit()){
 // Biến chứa lỗi
 $error = array();
 // require file xử lý database cho user
@@ -33,16 +29,15 @@ if (is_submit('add_card'))
             'id_member' 	=> input_post('id_member'),
             $id_member      = input_post('id_member'),
         );
-        var_dump($data);
         // Thực hiện validate
-        //$error = db_userpay_validate($data);
+        $error = db_addcard_validate($data);
         // Nếu validate không có lỗi
         if (!$error)
         {
             if (db_execute(db_create_sql("UPDATE cards SET id_card = '$id_card', id_member = '$id_member' {where}", array('id_card' => $id_card)))){
                 ?>
                 <script language="javascript">
-                    alert('Nạp thành công !');
+                    alert('Thêm card thành công !');
                     window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'addcard')); ?>';
                 </script>
                 <?php
@@ -103,3 +98,6 @@ if (is_submit('add_card'))
 <br>
 
 <?php include_once('widgets/footer.php'); ?>
+<?php
+    redirect(create_link(base_url('admin'), array('m' => 'common', 'a' => 'logout')));
+}?>

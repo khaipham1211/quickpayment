@@ -17,15 +17,15 @@
 	    if ($id_member)
 	    {
 	    	//Lấy thông tin card
-	    	$card = db_get_row(db_create_sql('SELECT * FROM cards {where}', array(
-	            'id_member' => $id_member)));
+	    	//$card = db_get_row(db_create_sql('SELECT * FROM cards {where}', array(
+	            //'id_member' => $id_member)));
 	        // Lấy thông tin người dùng
 	        $user = db_get_row(db_create_sql('SELECT * FROM members {where}', array(
 	            'id_member' => $id_member
 	        )));
 	        
-	        $id_card = $card['id_card'];
-	        $data = array('id_card'=>$id_card);
+	        //$id_card = $card['id_card'];
+	        //$data = array('id_card'=>$id_card);
 	        // Kiểm tra có phải xóa admin hay không
 	        if ($user['ID_UG'] == '1'){
 	            ?>
@@ -41,7 +41,7 @@
 	                'id_member' => $id_member
 	            ));
 	 
-	            if (db_execute($sql)&&(db_insert('cards',$data))){
+	            if (db_execute($sql)){
 	                ?>
 	                <script language="javascript">
 	                    alert('Xóa thành công!');
@@ -60,8 +60,36 @@
 	        }
 	    }
 	}
-	else{
-	    // Nếu không phải submit delete user thì chuyển về trang chủ
-	    redirect(base_url('admin'));
+	//delete card
+	if (is_submit('delete_card'))
+	{
+	    // Lấy id_card và ép kiểu
+	    $id_card = input_post('id_card');
+	    if ($id_card)
+	    {
+	    	//Lấy thông tin card
+	    	$card = db_get_row(db_create_sql('SELECT * FROM cards {where}', array(
+	            'id_card' => $id_card)));
+	        $sql = db_create_sql('DELETE FROM cards {where}', array(
+	            'id_card' => $id_card
+	        ));
+	 
+	        if (db_execute($sql)){
+	            ?>
+	            <script language="javascript">
+	                alert('Xóa thành công!');
+	                window.location = '<?php echo input_post('redirect'); ?>';
+	            </script>
+	            <?php
+	            }
+	        else{
+	            ?>
+	            <script language="javascript">
+	                alert('Xóa thất bại!');
+	                window.location = '<?php echo input_post('redirect'); ?>';
+	            </script>
+	            <?php
+	        }
+	    }
 	}
 ?>

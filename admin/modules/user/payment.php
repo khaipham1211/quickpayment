@@ -27,7 +27,7 @@
             </script>
             <?php
         }
-        if(is_deposit()){
+        if(is_deposit()||is_service()){
             ?>
             <script language="javascript">
                 window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'search')); ?>';
@@ -53,8 +53,11 @@
         //  CODE XỬ LÝ PHÂN TRANG
         $id = get_current_id(); 
         // Tìm tổng số records
-        if(is_deposit()){
+        if(is_deposit()||is_service()){
             $sql = "SELECT count(date_time) as counter from payments where id_collect_member ='$id'";
+        }
+        if(is_student()){
+            $sql = "SELECT count(date_time) as counter from payments where id_pay_member ='$id'";
         }
         if(is_admin()){
             $sql = "SELECT count(date_time) as counter from payments";
@@ -76,9 +79,13 @@
         ));
         // Thực hiện phân trang
         $paging = paging($link, $total_records, $current_page, $limit);
-        if(is_deposit()){
+        if(is_deposit()||is_service()){
             $query = "select * from payments where id_collect_member = '$id' ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
         }
+        if(is_student()){
+             $query = "select * from payments where id_pay_member = '$id' ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
+        }
+
         if(is_admin()){
             $query = "select * from payments ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
         }
@@ -103,7 +110,7 @@
                 <?php if(is_admin()){?>
                  <input type="text" name="search" class="form-control" placeholder="ID Deposit staff" />
                  <?php }?>
-                <?php if(is_deposit()){?>
+                <?php if(is_deposit()||is_service()){?>
                  <input type="text" name="search" class="form-control" placeholder="ID Member" />
                  <?php }?>
                 </div>
@@ -111,7 +118,9 @@
                         <input type="hidden" name="request_name" value="search" class="button" onclick="$('#main-form').submit()"/>
                     </td>
                     <td>
-                        <input type="submit" name="login-btn" value="Search" class="btn btn-default" />
+                        <?php if(is_deposit()||is_admin()||is_service()){?>
+                         <input type="submit" name="login-btn" value="Search" class="btn btn-default" />
+                        <?php }?>
                     </td>
                 </tr>
             </form>

@@ -5,6 +5,11 @@
 	    $sql = "SELECT * FROM members where id_member = '$id_member'";
 	    return db_get_row($sql);
 	}
+    function db_card_get_by_id_member($id_card){
+        $id_member = addslashes($id_member);
+        $sql = "SELECT * FROM cards where id_card = '$id_card'";
+        return db_get_row($sql);
+    }
 	//Ham random password
   	function rand_string( $length=6 ) {
 	    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -86,14 +91,13 @@ function db_user_validate($data){
         }
     }
      
-    /* Email
     if (!($error) && isset($data['email']) && $data['email']){
-        $sql = "SELECT count(id) as counter FROM tb_user WHERE email='".addslashes($data['email'])."'";
+        $sql = "SELECT count(id_member) as counter FROM members WHERE email='".addslashes($data['email'])."'";
         $row = db_get_row($sql);
         if ($row['counter'] > 0){
             $error['email'] = 'Email này đã tồn tại';
         }
-    }*/
+    }
      
     return $error;
 
@@ -187,7 +191,7 @@ function db_userpay_validate($data){
     /* VALIDATE CĂN BẢN */
     // id_member
     if (isset($data['id_member']) && $data['id_member'] == ''){
-        $error['id_member'] = 'Bạn chưa nhập tên đăng nhập';
+        $error['id_member'] = 'Bạn chưa nhập tên tài khoản cần nạp';
     }
     if (isset($data['balance']) && $data['balance'] == ''){
         $error['balance'] = 'Bạn chưa nhập số tiền cần nạp';
@@ -228,6 +232,44 @@ function db_updatepass_validate($data){
 
     if ($user['password'] != md5($data['passwordold'])) {
             $error['passwordold'] = 'Mật khẩu cũ bạn nhập không đúng';
+        }
+    }
+    return $error;
+}
+
+function db_addcard_validate($data){
+    if (isset($data['id_card']) && $data['id_card'] == ''){
+        $error['id_card'] = 'Bạn chưa nhập id card';
+    }
+    if (isset($data['id_member']) && $data['id_member'] == ''){
+        $error['id_member'] = 'Bạn chưa nhập id member';
+    }
+    if (!($error) && isset($data['id_card']) && $data['id_card']){
+        $sql = "SELECT count(id_card) as counter FROM cards WHERE id_card='".addslashes($data['id_card'])."'";
+        $row = db_get_row($sql);
+        if ($row['counter'] == 0){
+            $error['id_card'] = 'ID card không tồn tại';
+        }
+    }
+    if (!($error) && isset($data['id_member']) && $data['id_member']){
+        $sql = "SELECT count(id_member) as counter FROM cards WHERE id_member='".addslashes($data['id_member'])."'";
+        $row = db_get_row($sql);
+        if ($row['counter'] > 0){
+            $error['id_member'] = 'ID member đã tồn tại';
+        }
+    }
+    if (!($error) && isset($data['id_member']) && $data['id_member']){
+        $sql = "SELECT count(id_member) as counter FROM members WHERE id_member='".addslashes($data['id_member'])."'";
+        $row = db_get_row($sql);
+        if ($row['counter'] == 0){
+            $error['id_member'] = 'ID member không tồn tại';
+        }
+    }
+    if(!$error){
+    $user = db_card_get_by_id_member($data['id_card']);
+
+    if ($user['id_member'] != '' ) {
+            $error['id_card'] = 'Id card đã được sử dụng';
         }
     }
     return $error;

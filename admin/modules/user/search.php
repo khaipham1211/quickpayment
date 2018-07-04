@@ -175,7 +175,7 @@
     }
 }
 ?>
-<?php   if(is_deposit()){
+<?php   if(is_deposit()||is_service()){
         $is_search = (is_search());
         //  CODE XỬ LÝ PHÂN TRANG
         $id = get_current_id(); 

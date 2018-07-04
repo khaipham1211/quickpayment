@@ -37,7 +37,9 @@
           <li><a   role="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>"> Users <span class="sr-only">(current)</span></a></li>
           <!-- <li class="active" style="background-color: #3374C2"><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">User <span class="sr-only">(current)</span></a></li> -->
           <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Transactions</a></li>
+          <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'listcard')); ?>">List Card</a></li>
           <li><a href="#">Logs</a></li>
+          <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'editpass')); ?>">Change password</a></li>
         </ul>
         <form class="navbar-form navbar-left">
         <!--   <div class="form-group">
@@ -47,7 +49,7 @@
         </form>
         <ul class="nav navbar-nav navbar-right">
           <div style="padding-top: 15px">
-                      Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>|
+                      Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>| Balance: <span style="font-weight: bold"> <?php echo get_current_balance(); ?> VND </span>|
                       <a class="btn btn-primary btn-sm" role="button" href="<?php echo base_url('admin/?m=common&a=logout'); ?>">Logout</a>
                   </div>
         
@@ -76,7 +78,7 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul  class="nav navbar-nav">
-          
+          <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Transactions</a></li>
           <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'editpass')); ?>">Change password</a></li>
           
         </ul>
@@ -121,7 +123,8 @@
           <li><a   role="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'pay'));  ?>"> Deposit <span class="sr-only">(current)</span></a></li>
           <!-- <li class="active" style="background-color: #3374C2"><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">User <span class="sr-only">(current)</span></a></li> -->
           <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Transactions</a></li>
-         <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'addcard')); ?>">Add Card</a></li>
+         <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'listcard')); ?>">List Card</a></li>
+         <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'editpass')); ?>">Change password</a></li>
         </ul>
         <form class="navbar-form navbar-left">
           <!-- <div class="form-group">
@@ -131,7 +134,7 @@
         </form>
         <ul class="nav navbar-nav navbar-right">
           <div style="padding-top: 15px">
-                      Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>|
+                      Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>| Balance: <span style="font-weight: bold"> <?php echo get_current_balance(); ?> VND </span>|
                       <a class="btn btn-primary btn-sm" role="button" href="<?php echo base_url('admin/?m=common&a=logout'); ?>">Logout</a>
                   </div>
         
@@ -167,10 +170,8 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul  class="nav navbar-nav">
-          <!-- <li><a   role="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'pay'));  ?>"> Deposit <span class="sr-only">(current)</span></a></li> -->
-          <!-- <li class="active" style="background-color: #3374C2"><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">User <span class="sr-only">(current)</span></a></li> -->
-         <!--  <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Tin tức</a></li> -->
-         <!-- <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'addcard')); ?>">Add Card</a></li> -->
+         <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Transactions</a></li>
+         <li ><a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'editpass')); ?>">Change password</a></li>
         </ul>
         <form class="navbar-form navbar-left">
           <!-- <div class="form-group">
@@ -180,7 +181,7 @@
         </form>
         <ul class="nav navbar-nav navbar-right">
           <div style="padding-top: 15px">
-                    Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>|
+                    Hello <span style="font-weight: bold"> <?php echo get_current_name(); ?> </span>| Balance: <span style="font-weight: bold"> <?php echo get_current_balance(); ?> VND </span>|
                       <a class="btn btn-primary btn-sm" role="button" href="<?php echo base_url('admin/?m=common&a=logout'); ?>">Logout</a>
                   </div>
         

@@ -31,7 +31,7 @@ if (is_submit('update_pass'))
         if (db_execute(db_create_sql("UPDATE  members SET password ='$passwordnew' {where}", array('id_member' => $id_member)))){
             ?>
             <script language="javascript">
-                alert('Sửa người dùng thành công!');
+                alert('Thay đổi password thành công!');
                  window.location = '<?php echo create_link(base_url('admin'), array('m' => 'common', 'a' => 'dashboard')); ?>';
             </script>
             <?php
@@ -75,7 +75,7 @@ if (is_submit('update_pass'))
 <center>
 <div class="controls">
     <a class="btn btn-primary btn-sm" role="button" onclick="$('#main-form').submit()" href="#">Save</a>
-    <a class="btn btn-primary btn-sm" role="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">Cancel</a></div>
+    <a class="btn btn-primary btn-sm" role="button" href="<?php echo create_link(base_url('admin'), array('m' => 'common', 'a' => 'dashboard')); ?>">Cancel</a></div>
 </center>
 </div>
  </div>

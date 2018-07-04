@@ -1,15 +1,12 @@
 <?php if (!defined('IN_SITE')) die ('The request not found');
  
 // Kiểm tra quyền, nếu không có quyền thì chuyển nó về trang logout
-if (!is_admin()){
-    redirect(create_link(base_url('admin'), array('m' => 'common', 'a' => 'logout')));
-}
 ?>
  
 <?php include_once('widgets/header.php'); ?>
 
 <?php
-    if(is_submit('search')){
+    if(is_submit('search1')){
         // Gán hàm addslashes để chống sql injection
         $search = addslashes($_POST['search']);
         set_search($search);
@@ -22,28 +19,29 @@ if (!is_admin()){
         // và chuyển hướng về trang danh sách user
             ?>
             <script language="javascript">
-                window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'search')); ?>';
+                window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'searchcard')); ?>';
             </script>
             <?php
         }
         else{
-            echo "Yeu cau Nhap Du Lieu Vao O Tim Kiem";
+            echo "Enter data into searchbar";
             ?>
             <div class="controls">
-                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">back</a>
+                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'listcard')); ?>">Back</a>
             </div>
             <?php
-            return $is_search = (is_search());
-
+             return $is_search = (is_search());
         }
     }
 ?>
-
  
 <?php 
+        if(is_admin()|| is_deposit()){
+        // Lấy danh sách User
+        $is_search = (is_search());
         //  CODE XỬ LÝ PHÂN TRANG 
         // Tìm tổng số records
-        $sql = "SELECT count(id_member) as counter from members";
+        $sql = "SELECT count(id_member) as counter from cards where id_member like '%$is_search%'";
         $result = db_get_row($sql);
         $total_records = $result['counter'];
          
@@ -56,15 +54,27 @@ if (!is_admin()){
         // Lấy link
         $link = create_link(base_url('admin'), array(
             'm' => 'user',
-            'a' => 'list',
+            'a' => 'searchcard',
             'page' => '{page}'
         ));
+         
         // Thực hiện phân trang
         $paging = paging($link, $total_records, $current_page, $limit);
-        $sql = db_create_sql("SELECT * FROM members {where} LIMIT {$paging['start']}, {$paging['limit']}");
-        $users = db_get_list($sql);
-        ?>
-        <!DOCTYPE html>
+        // Nếu $search rỗng thì báo lỗi, tức là người dùng chưa nhập liệu mà đã nhấn submit.
+        if (empty($is_search)) {
+            echo "Enter data into searchbar";
+            ?>
+            <div class="controls">
+                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'listcard')); ?>">Back</a>
+            </div>
+            <?php
+        }
+        else{
+            $query = "select * from cards where id_member like '%$is_search%' LIMIT {$paging['start']}, {$paging['limit']} ";
+            // Thực thi câu truy vấn
+            $users = mysqli_query($conn, $query);
+            ?>
+       <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -79,12 +89,12 @@ if (!is_admin()){
         <div class="controls">
             <form id="main-form" method="post" action="">
                 <div class="col-xs-6 col-md-4">
-                 <input type="text" name="search" class="form-control" placeholder="ID members" />
+                 <input type="text" name="search" class="form-control" placeholder="ID member" />
                 </div>
                 
                     <td>
 
-                        <input type="hidden" name="request_name" value="search" class="button" onclick="$('#main-form').submit()"/>
+                        <input type="hidden" name="request_name" value="search1" class="button" onclick="$('#main-form').submit()"/>
                     </td>
                     <td>
                         <input type="submit" name="login-btn" value="Search" class="btn btn-default"/>
@@ -93,24 +103,14 @@ if (!is_admin()){
             </form>
         <br>
             <div class="controls">
-    <a class="btn btn-primary btn-sm" role="button" style=" " href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'add')); ?>">Add</a>
-    <a  href="<?php echo create_link(base_url('admin'), array('m' => 'common', 'a' => 'dashboard')); ?>" class="btn btn-primary btn-sm" role="button" >Back</a>
+    <a class="btn btn-primary btn-sm" role="button" style=" " href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'listcard')); ?>">Back</a>
 </div>
 
 <table  class="table table-hover">
     <thead>
         <tr  class="info">
+            <th>ID Card</th>
             <th>ID Member</th>
-            <!-- <th>PassWord</th> -->
-            <th>Full Name</th>
-            <th>Sex</th>
-            <th>DayofBirth</th>
-            <th>Phone</th>
-            <th>ID UG</th>
-            <th>ID WP</th>
-            <th>Balance</th>
-            <th>Email</th>
-            <th>Is Service Staff</th>
             <?php if (is_admin()){ ?>
             <th>Action</th>
             <?php } ?>
@@ -120,27 +120,19 @@ if (!is_admin()){
         <?php 
         //  CODE HIỂN THỊ NGƯỜI DÙNG 
         ?>
-        <?php foreach ($users as $item) { ?>
+        <?php 
+            if($total_records> 0 && $is_search != ""){
+            echo " $total_records results about <b>'$is_search'</b>";
+            foreach ($users as $item) {
+        ?>
         <tr class="danger">
+            <td ><?php echo $item['id_card']; ?></td>
             <td ><?php echo $item['id_member']; ?></td>
-            <!-- <td ><?php echo $item['password']; ?></td> -->
-            <td ><?php echo $item['name']; ?></td>
-            <td ><?php echo $item['sex']; ?></td>
-            <?php 
-                $datetime = date('d-m-Y',strtotime($item['dayofbirth']));?>
-            <td><?php echo $datetime; ?></td>
-            <td ><?php echo $item['phone']; ?></td>
-            <td ><?php echo $item['ID_UG']; ?></td>
-            <td ><?php echo $item['ID_WP']; ?></td>
-            <td ><?php echo $item['balance']; ?></td>
-            <td ><?php echo $item['email']; ?></td>
-            <td ><?php echo $item['is_service_staff']; ?></td>
             <?php if (is_admin()){ ?>
             <td>
                 <form method="POST" class="form-delete" action="<?php echo create_link(base_url('admin/index.php'), array('m' => 'user', 'a' => 'delete')); ?>">
-                    <a href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'edit', 'id_member' => $item['id_member'])); ?>">Edit</a>
-                    <input type="hidden" name="id_member" value="<?php echo $item['id_member']; ?>"/>
-                    <input type="hidden" name="request_name" value="delete_user"/>
+                    <input type="hidden" name="id_card" value="<?php echo $item['id_card']; ?>"/>
+                    <input type="hidden" name="request_name" value="delete_card"/>
                     <a href="#" class="btn-submit">Delete</a>
                 </form>
             </td>
@@ -150,13 +142,21 @@ if (!is_admin()){
     </tbody>
 
 </table>
- 
-<div class="btn-toolbar" role="toolbar">
-    <?php //  CODE HIỂN THỊ CÁC NÚT PHÂN TRANG 
-    echo $paging['html'] ;
-    ?>
-</div>
 
+<?php
+        }
+        else{
+        echo"No result";
+    }
+    }
+}
+?>
+        <div class="pagination">
+            <?php //  CODE HIỂN THỊ CÁC NÚT PHÂN TRANG 
+            echo $paging['html'];
+            ?>
+        </div>
+ 
 <script language="javascript">
     $(document).ready(function(){
         // Nếu người dùng click vào nút delete
@@ -168,7 +168,7 @@ if (!is_admin()){
  
         // Nếu sự kiện submit form xảy ra thì hỏi người dùng có chắc không?
         $('.form-delete').submit(function(){
-            if (!confirm('Bạn có chắc muốn xóa thành viên này không?')){
+            if (!confirm('Bạn có chắc muốn xóa card này không?')){
                 return false;
             }
              
@@ -182,7 +182,7 @@ if (!is_admin()){
         });
     });
 </script>
-</div>
+ </div>
  </body>
  </html>
 <?php include_once('widgets/footer.php'); ?>
