@@ -1,48 +1,40 @@
 <?php if (!defined('IN_SITE')) die ('The request not found');
  
 // Kiểm tra quyền, nếu không có quyền thì chuyển nó về trang logout
-//if (!is_deposit()){
-//    redirect(create_link(base_url('admin'), array('m' => 'common', 'a' => 'logout')));
-//}
 ?>
  
 <?php include_once('widgets/header.php'); ?>
 
 <?php
-    if(is_submit('search')){
+    if(is_submit('search1')){
         // Gán hàm addslashes để chống sql injection
         $search = addslashes($_POST['search']);
         set_search($search);
-    if (!$search==''){
-        // Xóa key re-password ra khoi $data
-        //unset($data['re-password']);
-         
+    if (!$search=='')
+    {
         // Nếu insert thành công thì thông báo
         // và chuyển hướng về trang danh sách user
-        if(is_admin()){
-            ?>
-            <script language="javascript">
-                window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'searchpay')); ?>';
-            </script>
-            <?php
-        }
-        if(is_deposit()||is_service()){
             ?>
             <script language="javascript">
                 window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'searchservice')); ?>';
             </script>
             <?php
         }
-    }
         else{
-            echo "Enter data into searchbar!";
+            echo "Enter data!";
             ?>
+            <?php if(is_admin()){?>
             <div class="controls">
-                <a class="btn btn-primary btn-sm" role="btn" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Back</a>
+                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">Back</a>
             </div>
+            <?php }?>
+            <?php if(is_deposit()||is_service()){?>
+            <div class="controls">
+                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Back</a>
+            </div>
+            <?php }?>
             <?php
-            return $is_search = (is_search());
-
+             return $is_search = (is_search());
         }
     }
 if(is_submit('thongke')){
@@ -85,21 +77,14 @@ if(is_submit('thongke')){
         }
     }
 ?>
-
  
 <?php 
-        //  CODE XỬ LÝ PHÂN TRANG
+        // Lấy danh sách User
+        $is_search = (is_search());
+        //  CODE XỬ LÝ PHÂN TRANG 
         $id = get_current_id(); 
         // Tìm tổng số records
-        if(is_deposit()||is_service()){
-            $sql = "SELECT count(date_time) as counter from payments where id_collect_member ='$id'";
-        }
-        if(is_student()){
-            $sql = "SELECT count(date_time) as counter from payments where id_pay_member ='$id'";
-        }
-        if(is_admin()){
-            $sql = "SELECT count(date_time) as counter from payments";
-        }
+        $sql = "SELECT count(date_time) as counter from payments where id_collect_member ='$id' and id_pay_member = '$is_search'";
         $result = db_get_row($sql);
         $total_records = $result['counter'];
          
@@ -112,38 +97,39 @@ if(is_submit('thongke')){
         // Lấy link
         $link = create_link(base_url('admin'), array(
             'm' => 'user',
-            'a' => 'payment',
+            'a' => 'searchpay',
             'page' => '{page}'
         ));
+         
         // Thực hiện phân trang
         $paging = paging($link, $total_records, $current_page, $limit);
-        if(is_deposit()||is_service()){
-            $query = "select * from payments where id_collect_member = '$id' ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
+        // Nếu $search rỗng thì báo lỗi, tức là người dùng chưa nhập liệu mà đã nhấn submit.
+        if (empty($is_search)) {
+            echo "Enter data!";
+            ?>
+            <div class="controls">
+                <a class="button" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'list')); ?>">Back</a>
+            </div>
+            <?php
         }
-        if(is_student()){
-             $query = "select * from payments where id_pay_member = '$id' ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
-        }
-
-        if(is_admin()){
-            $query = "select * from payments ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
-        }
-        // Thực thi câu truy vấn
-        $users = mysqli_query($conn, $query);
-
-        ?>
-
-         <!DOCTYPE html>
+        else{
+        $query = "select * from payments where id_collect_member = '$id' AND id_pay_member = '$is_search' ORDER BY date_time DESC LIMIT {$paging['start']}, {$paging['limit']} ";
+            // Thực thi câu truy vấn
+            $users = mysqli_query($conn, $query);
+            ?>
+       <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>List user</title>
-   
-        </head>
-<body>
-        <div class="container">
-        <h1 align="center">List of newest transactions</h1>
+    </head>
+
+   <body>
+
+<div class="container">
+<center><h1>List of newest transactions</h1></center>
         <div class="controls">
-            <form id="main-form" method="post" action="">
+           <form id="main-form" method="post" action="">
                 <div class="col-xs-6 col-md-4">
                 <?php if(is_admin()){?>
                  <input type="text" name="search" class="form-control" placeholder="ID Deposit staff" />
@@ -153,7 +139,7 @@ if(is_submit('thongke')){
                  <?php }?>
                 </div>
                     <td>
-                        <input type="hidden" name="request_name" value="search" class="button" onclick="$('#main-form').submit()"/>
+                        <input type="hidden" name="request_name" value="search1" class="button" onclick="$('#main-form').submit()"/>
                     </td>
                     <td>
                         <?php if(is_deposit()||is_admin()||is_service()){?>
@@ -181,8 +167,10 @@ if(is_submit('thongke')){
                 </tr>
             </form>
         <br>
-            <a  href="<?php echo create_link(base_url('admin'), array('m' => 'common', 'a' => 'dashboard')); ?>" class="btn btn-primary btn-sm" role="button" >Back</a>
-        </div>
+            <div class="controls">
+    <a class="btn btn-primary btn-sm" role="button" style=" " href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Back</a>
+</div>
+
         <table cellspacing="0" cellpadding="0" class="table table-hover">
             <thead>
                 <tr class="info">
@@ -191,14 +179,26 @@ if(is_submit('thongke')){
                     <th>Amount Of Money</th>
                     <th>Type Payment</th>
                     <th>Date Time</th>
-                    
                 </tr>
             </thead>
             <tbody>
                 <?php 
                 //  CODE HIỂN THỊ NGƯỜI DÙNG 
                 ?>
-                <?php foreach ($users as $item) { ?>
+                <?php 
+                if($total_records> 0 && $is_search != ""){
+                    echo "$total_records results about <b>'$is_search'</b>" ;
+                    $query1 = "select sum(amountofmoney) as tong from payments where  id_pay_member = '$is_search' and id_collect_member ='$id'";
+                    // Thực thi câu truy vấn
+                    $sum = mysqli_query($conn, $query1);
+                    $row = mysqli_fetch_array($sum);
+                    ?>
+                    <br>
+                    <?php
+                    echo "<b>Sum: <b>";
+                    echo "Tổng: " + $row['tong'];
+                    foreach ($users as $item) {
+                ?>
                 <tr class="danger">
                     <td><?php echo $item['id_collect_member']; ?></td>
                     <td><?php echo $item['id_pay_member']; ?></td>
@@ -207,16 +207,24 @@ if(is_submit('thongke')){
                     <?php 
                     $datetime = date('d-m-Y H:i:s',strtotime($item['date_time']));?>
                     <td><?php echo $datetime; ?></td>
-                    
                 </tr>
                 <?php } ?>
-            </tbody>
+           
+<?php
+        }else{
+            echo "No result!";
+        }
+    }
+
+?>
+ </tbody>
         </table>
-<div class="pagination">
-    <?php //  CODE HIỂN THỊ CÁC NÚT PHÂN TRANG 
-        echo $paging['html'];
-        ?>
-</div>
+        <div class="pagination pagination-lg">
+            <?php //  CODE HIỂN THỊ CÁC NÚT PHÂNs TRANG 
+            echo $paging['html'];
+            ?>
+        </div>
+ 
 <script language="javascript">
     $(document).ready(function(){
         // Nếu người dùng click vào nút delete
@@ -242,8 +250,7 @@ if(is_submit('thongke')){
         });
     });
 </script>
-</div>
-</body>
-</html>
  
+ </div>
+</div>
 <?php include_once('widgets/footer.php'); ?>

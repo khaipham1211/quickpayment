@@ -17,4 +17,5 @@
 	    }
 	}
 	echo session_get('id_member');
+	
 ?>

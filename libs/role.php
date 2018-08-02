@@ -26,6 +26,30 @@
 	    $search = session_get('ss_search');
 	    return $search;
 	}
+ 
+	//Ham thiet lap da search
+	function set_from($from){
+	    session_set('ss_from',$from);
+
+	}
+	 
+	//ham kiem tra search 
+	function is_from(){
+	    $from = session_get('ss_from');
+	    return $from;
+	}
+    
+	//Ham thiet lap da search
+	function set_to($to){
+	    session_set('ss_to',$to);
+
+	}
+	 
+	//ham kiem tra search 
+	function is_to(){
+	    $to = session_get('ss_to');
+	    return $to;
+	}
 
 	// Hàm thiết lập xóa search
 	function set_searchout(){

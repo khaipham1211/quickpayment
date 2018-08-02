@@ -13,7 +13,7 @@
     if (!$search=='')
     {
         // Xóa key re-password ra khoi $data
-        //unset($data['re-password']);
+        //unset($data['re-password']);  
          
         // Nếu insert thành công thì thông báo
         // và chuyển hướng về trang danh sách user
@@ -38,6 +38,45 @@
             <?php }?>
             <?php
              return $is_search = (is_search());
+        }
+    }
+if(is_submit('thongke')){
+        // Gán hàm addslashes để chống sql injection
+        $from = addslashes($_POST['from']);
+        set_from($from);
+        $to = addslashes($_POST['to']);
+        set_to($to);
+    if (!$from=='' && !$to==''){
+        // Xóa key re-password ra khoi $data
+        //unset($data['re-password']);
+         
+        // Nếu insert thành công thì thông báo
+        // và chuyển hướng về trang danh sách user
+        if(is_admin()){
+            ?>
+            <script language="javascript">
+                window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'searchdate')); ?>';
+            </script>
+            <?php
+        }
+        if(is_deposit()||is_service()){
+            ?>
+            <script language="javascript">
+                window.location = '<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'search')); ?>';
+            </script>
+            <?php
+        }
+    }
+        else{
+            echo "Enter data into searchbar!";
+            ?>
+            <div class="controls">
+                <a class="btn btn-primary btn-sm" role="btn" href="<?php echo create_link(base_url('admin'), array('m' => 'user', 'a' => 'payment')); ?>">Back</a>
+            </div>
+            <?php
+            return $is_from = (is_from());
+            return $is_to = (is_to());
+
         }
     }
 ?>
@@ -92,18 +131,40 @@
 <div class="container">
 <center><h1>List of newest transactions</h1></center>
         <div class="controls">
-            <form id="main-form" method="post" action="">
+           <form id="main-form" method="post" action="">
                 <div class="col-xs-6 col-md-4">
-                 <input type="text" name="search" class="form-control" placeholder="ID Deposit" />
-                 
+                <?php if(is_admin()){?>
+                 <input type="text" name="search" class="form-control" placeholder="ID Deposit staff" />
+                 <?php }?>
+                <?php if(is_deposit()||is_service()){?>
+                 <input type="text" name="search" class="form-control" placeholder="ID Member" />
+                 <?php }?>
                 </div>
-                
                     <td>
-
                         <input type="hidden" name="request_name" value="search1" class="button" onclick="$('#main-form').submit()"/>
                     </td>
                     <td>
-                        <input type="submit" name="login-btn" value="Search" class="btn btn-default"/>
+                        <?php if(is_deposit()||is_admin()||is_service()){?>
+                         <input type="submit" name="login-btn" value="Search" class="btn btn-default" />
+                        <?php }?>
+                    </td>
+                </tr>
+            </form>
+            <form id="main-form1" method="post" action="">
+                <div class="col-xs-6 col-md-4">
+                <?php if(is_admin()||is_deposit()||is_service()){?>
+                 From: <input type="date" name="from"/> 
+                 <br>
+                 To: <input type="date" name="to"/>
+                 <?php }?>
+                </div>
+                    <td>
+                        <input type="hidden" name="request_name" value="thongke" class="button" onclick="$('#main-form').submit()"/>
+                    </td>
+                    <td>
+                        <?php if(is_deposit()||is_admin()||is_service()){?>
+                         <input type="submit" name="login-btn" value="Thống Kê" class="btn btn-default" />
+                        <?php }?>
                     </td>
                 </tr>
             </form>
@@ -133,7 +194,10 @@
                     // Thực thi câu truy vấn
                     $sum = mysqli_query($conn, $query1);
                     $row = mysqli_fetch_array($sum);
-                    
+                    ?>
+                    <br>
+                    <?php
+                    echo "<b>Sum: <b>";
                     echo "Tổng: " + $row['tong'];
                     foreach ($users as $item) {
                 ?>
